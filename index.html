@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="submodules/materialize-clockpicker/dist/css/materialize.clockpicker.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="dist/css/materialize.pickadatetime.css" media="screen,projection" />
+
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
+    <script src="submodules/materialize-clockpicker/dist/js/materialize.clockpicker.js"></script>
+
+    <script src="dist/js/pickadatetime.js"></script>
+    <title>Materialize Datetimepicker</title>
+</head>
+
+<body>
+<nav>
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo">Materialize Datetimepicker</a>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s12">
+                    <label for="datetimepicker">Time am/pm</label>
+                    <input id="datetimepicker" class="datetimepicker" type="time">
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    //am/pm
+    $('#datetimepicker').pickadatetime({
+        pickadate: {
+
+        },
+        pickatime: {
+
+        },
+        interval: 15,
+        min: [8,30],
+        max: [15, 45],
+        disable: [[11], [null, 15], [10, 30]]
+    });
+</script>
+</body>
+
+</html>

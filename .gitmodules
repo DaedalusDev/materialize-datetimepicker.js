@@ -1,0 +1,3 @@
+[submodule "submodules/materialize-clockpicker"]
+	path = submodules/materialize-clockpicker
+	url = https://github.com/DaedalusDev/materialize-clockpicker.git
