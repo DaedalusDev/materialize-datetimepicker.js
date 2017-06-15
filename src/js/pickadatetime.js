@@ -193,8 +193,7 @@
             } else {
                 if ($.isPlainObject(option)) { // case recall with new parameters
                     options = $.extend({}, data.options, option); // merge previous options
-                    data.remove(); // remove previous
-                    $this.data('datetimepicker', new DateTimePicker($this, options));
+                    data.options = options;
                 }
                 // Manual operatsions. show, hide, remove, e.g.
                 if (typeof data[option] === 'function')
