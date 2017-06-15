@@ -1,5 +1,5 @@
 {
-  "name": "pickadatetime.js",
+  "name": "materialize-datetimepicker.js",
   "version": "1.0.0",
   "description": "A materialize datetime/clockpicker combo ",
   "main": "index.html",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DaedalusDev/pickadatetime.js.git"
+    "url": "git+https://github.com/DaedalusDev/materialize-datetimepicker.js.git"
   },
   "keywords": [
     "materializecss",
@@ -23,10 +23,11 @@
   "author": "DaedalusDev",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DaedalusDev/pickadatetime.js/issues"
+    "url": "https://github.com/DaedalusDev/materialize-datetimepicker.js/issues"
   },
-  "homepage": "https://github.com/DaedalusDev/pickadatetime.js#readme",
-  "devDependencies": {
+  "homepage": "https://github.com/DaedalusDev/materialize-datetimepicker.js#readme",
+  "dependencies": {
+    "jquery": "^2.1.4",
     "materialize-css": "^0.98.2"
   }
 }

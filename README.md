@@ -1,2 +1,4 @@
-# pickadatetime.js
-                
+# materialize-datetimepicker.js
+
+##Installation
+

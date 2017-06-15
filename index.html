@@ -6,15 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link type="text/css" rel="stylesheet" href="submodules/materialize-clockpicker/dist/css/materialize.clockpicker.css" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="dist/css/materialize.pickadatetime.css" media="screen,projection" />
-
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
-    <script src="submodules/materialize-clockpicker/dist/js/materialize.clockpicker.js"></script>
+    <script src="submodules/materialize-clockpicker/src/js/materialize.clockpicker.js"></script>
 
-    <script src="dist/js/pickadatetime.js"></script>
+    <script src="src/js/pickadatetime.js"></script>
     <title>Materialize Datetimepicker</title>
 </head>
 
@@ -29,8 +28,8 @@
         <form class="col s12">
             <div class="row">
                 <div class="input-field col s12">
+                    <input id="datetimepicker" class="datetimepicker" type="text">
                     <label for="datetimepicker">Time am/pm</label>
-                    <input id="datetimepicker" class="datetimepicker" type="time">
                 </div>
             </div>
 
@@ -40,16 +39,17 @@
 <script type="text/javascript">
     //am/pm
     $('#datetimepicker').pickadatetime({
-        pickadate: {
-
-        },
-        pickatime: {
-
-        },
-        interval: 15,
-        min: [8,30],
-        max: [15, 45],
-        disable: [[11], [null, 15], [10, 30]]
+        min: [[2017, 5, 15], [8, 30]],
+        max: [[2017, 5, 18], [18, 30]],
+        disable: [
+            [
+                [2017, 5, 16],
+                [
+                    [18, 30],
+                    [19, 0]
+                ]
+            ]
+        ]
     });
 </script>
 </body>
