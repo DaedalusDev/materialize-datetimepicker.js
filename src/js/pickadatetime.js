@@ -228,19 +228,19 @@
 
         }
         if (optName === 'distinct') {
-            // if (options.distinct) {
-            //     $picker.addClass('hide')
-            //         .siblings('label')
-            //             .addClass('hide');
-            //     this.$datePickerWrapper.removeClass('hide');
-            //     this.$timePickerWrapper.removeClass('hide');
-            // } else {
-            //     this.$datePickerWrapper.addClass('hide');
-            //     this.$timePickerWrapper.addClass('hide');
-            //     $picker.removeClass('hide')
-            //         .siblings('label')
-            //         .removeClass('hide');
-            // }
+            if (options.distinct) {
+                $picker.addClass('hide')
+                    .siblings('label')
+                        .addClass('hide');
+                this.$datePickerWrapper.removeClass('hide');
+                this.$timePickerWrapper.removeClass('hide');
+            } else {
+                this.$datePickerWrapper.addClass('hide');
+                this.$timePickerWrapper.addClass('hide');
+                $picker.removeClass('hide')
+                    .siblings('label')
+                    .removeClass('hide');
+            }
         }
         if (aRestrinction.indexOf(optName) !== -1) {
             this.dispatchDateOption(optName);
@@ -290,7 +290,6 @@
                 var opt = $.extend({}, $this.data(), typeof option === 'object' && option);
                 if (opt.timepicker) {
                     $.extend(opt.timepicker, DateTimePicker.DEFAULTS.timepicker, opt);
-                    console.log(opt);
                 }
                 if (opt.datepicker) {
                     $.extend(opt.datepicker, DateTimePicker.DEFAULTS.datepicker, opt);
