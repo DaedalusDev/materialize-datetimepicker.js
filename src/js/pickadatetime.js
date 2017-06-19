@@ -27,7 +27,7 @@
     }
 
     function isEqual(a, b) {
-        if (typeof a != typeof b) {
+        if (typeof a !== typeof b) {
             return false;
         }
         switch (typeof a) {
@@ -64,7 +64,6 @@
 
         this._optionRefresh('distinct');
 
-
         this.$datePicker.pickadate(options.datepicker);
         this.oDatePicker = this.$datePicker.pickadate('picker');
 
@@ -81,43 +80,17 @@
         $picker.on('focus', function() {
             self.oDatePicker.open();
         });
-        function bindValue(datetime) {
-            if (datetime) {
-                var aSplit = /(.*)\s+(\d{1,2}:\d{1,2}\s*(AM|PM)?)$/gi.exec(datetime);
-                if (aSplit) {
-                    if (aSplit[1]) {
-                        self.oDatePicker.set('select', aSplit[1]);
-                        self.$datePicker.val(aSplit[1]).trigger('change');
-                    }
-                    if (aSplit[2]) {
-                        self.$timePicker.val(aSplit[2]).trigger('change');
-                    }
-                }
-            }
-            datetime = $picker.val();
-            var date = self.$datePicker.val(), time = self.$timePicker.val();
-
-            if (date && time) {
-                $picker.val(date+' '+time);
-            } else {
-                $picker.val('');
-            }
-
-            if ($picker.val() !== datetime)
-                $picker.trigger('change');
-        }
-        bindValue($picker.val());
+        this.bindValue($picker.val());
         // switch to Timepicker on close
         this.oDatePicker
             .on('set', function(val) {
                 if (val.select) {
-                    val = new Date(val.select);
-                    val = [val.getFullYear(), val.getMonth(), val.getDate()];
+                    val = self.parseDate(new Date(val.select));
                     self.aDate = val;
                 } else {
                     self.aDate = [];
                 }
-                bindValue();
+                self.bindValue();
             })
             .on('close', function() {
                 if (self.aDate.length) {
@@ -128,11 +101,11 @@
                         self.oTimePicker.show();
                     }
                 }
-                bindValue();
+                self.bindValue();
             });
         this.$timePicker
             .on('change', function() {
-                bindValue();
+                self.bindValue();
             });
     }
 
@@ -140,12 +113,12 @@
         datepicker: {
             icon: "&#xE8DF;",       // Icon for distinct picker
             label: "Date",          // Label for distinct picker
-            container: "body"       // Fix hidden/scroll... issue
+            // container: "body"       // Fix hidden/scroll... issue
         },
         timepicker: {
             icon: "&#xE192;",       // Icon for distinct picker
             label: "Time",          // Label for distinct picker
-            container: "body",      // Fix hidden/scroll... issue
+            // container: "body",      // Fix hidden/scroll... issue
             twelvehour: false
         },
         distinct: true,             // Double picker : true, single picker : false
@@ -154,6 +127,89 @@
         min: false,                 // format : [{pickadate.min}, {pickatime.min}]
         max: false,                 // format : [{pickadate.max}, {pickatime.max}]
         disable: false              // format : [[{pickadate.format},{pickatime.format}], [{pickadate.format},[{pickatime.format}, {pickatime.format}, ...]], ... ]
+    };
+
+    DateTimePicker.prototype.bindValue = function (datetime) {
+        var self = this, $picker = this.element;
+        if (datetime) {
+            var aSplit = /(.*)\s+(\d{1,2}:\d{1,2}\s*(AM|PM)?)$/gi.exec(datetime);
+            if (aSplit) {
+                if (aSplit[1]) {
+                    self.oDatePicker.set('select', aSplit[1]);
+                    self.$datePicker.trigger('change');
+                }
+                if (aSplit[2]) {
+                    self.$timePicker.val(aSplit[2]).trigger('change');
+                }
+            }
+        }
+        datetime = $picker.val();
+        var date = self.$datePicker.val(), time = self.$timePicker.val();
+
+        if (date && time) {
+            $picker.val(date+' '+time);
+        } else {
+            $picker.val('');
+        }
+
+        if ($picker.val() !== datetime)
+            $picker.trigger('change');
+    };
+
+     DateTimePicker.prototype.parseDateTime = function(datetime) {
+        if (Array.isArray(datetime)) {
+            if (datetime.length === 3 && datetime.every($.isNumeric)) {
+                return this.parseDate(datetime);
+            }
+            if (datetime.length === 2 && Array.isArray(datetime[0]) && Array.isArray(datetime[1])) {
+                return [this.parseDate(datetime[0]), datetime[1]];
+            }
+            if (datetime.length >= 5 && datetime.every($.isNumeric)) {
+                return [this.parseDate(datetime), Time.parse([datetime[3],datetime[4]])];
+            }
+        }
+        if (moment && moment.isMoment(datetime)) {
+            var aDateTime = moment.toArray();
+            var aDate = [aDateTime[0], aDateTime[1], aDateTime[2]];
+            var aTime = [aDateTime[3], aDateTime[4]];
+            return [aDate, aTime];
+        }
+        return [this.parseDate(datetime), Time.parse(datetime)];
+    };
+
+    DateTimePicker.prototype.parseDate = function (date) {
+        if (Array.isArray(date)) {
+            return [date[0], date[1], date[2]];
+        }
+        if (date instanceof Date) {
+            return [date.getFullYear(), date.getMonth(), date.getDate()];
+        }
+        if ($.isNumeric(date)) {
+            return this.parseDate(this.oDatePicker.component.measure(null, date));
+        }
+        if (typeof date === 'string') {
+            if (date === 'now') {
+                return this.parseDate(new Date());
+            }
+            return this.parseDate(this.oDatePicker.component.measure(null, date));
+        }
+        return false;
+    };
+
+    DateTimePicker.prototype.dispatchDateOption = function(optName) {
+        var options = this.options;
+        var opt = options[optName];
+        if (optName === 'disable') {
+            opt = opt.map(this.parseDateTime.bind(this));
+            if (options.datepicker[optName]) {
+                opt.concat(options.datepicker[optName]);
+            }
+            this.oDatePicker.set(optName, opt);
+        } else {
+            opt = this.parseDateTime(opt);
+            this.oDatePicker.set(optName, opt[0]);
+        }
+        options[optName] = opt; // Save parsing
     };
 
     DateTimePicker.prototype.dispatchTimeOption = function (optName) {
@@ -197,35 +253,15 @@
             }
         }
     };
-    DateTimePicker.prototype.dispatchDateOption = function(optName) {
-        var options = this.options;
-        var opt = options[optName];
-
-        if (optName === 'disable') {
-            var mapping = opt.map(function(v) {
-                return v[0];
-            });
-            if (options.datepicker[optName]) {
-                mapping.concat(options.datepicker[optName]);
-            }
-            this.oDatePicker.set(optName, mapping);
-        } else {
-            if (Array.isArray(opt)) {
-                this.oDatePicker.set(optName, opt[0]);
-            }
-        }
-    };
 
     DateTimePicker.prototype._optionRefresh = function(optName) {
         var options = this.options;
         var $picker = this.element;
         if (optName === 'datepicker') {
             this.oTimePicker.set(options.datepicker);
-
         }
         if (optName === 'timepicker') {
             this.oTimePicker.set(options.timepicker);
-
         }
         if (optName === 'distinct') {
             if (options.distinct) {
@@ -246,7 +282,7 @@
             this.dispatchDateOption(optName);
         }
     };
-    DateTimePicker.prototype.set = function (optName, value) {
+    DateTimePicker.prototype.set = function (optName, value, options) {
         var self = this;
         if ($.isPlainObject(optName)) {
             $.each(optName, function(k, v) {
@@ -258,7 +294,33 @@
             } else {
                 this.options[optName] = value;
             }
+            if (optName === 'value') {
+                this.bindValue(value);
+                return this;
+            }
+            if (optName === 'date') {
+                this.oDatePicker.set('select', value, options);
+                this.$datePicker.trigger('change');
+                return this;
+            }
+            if (optName === 'time') {
+                this.$timePicker.val(value).trigger('change');
+                return this;
+            }
             this._optionRefresh(optName);
+        }
+        return this;
+    };
+
+    DateTimePicker.prototype.get = function(optName) {
+        if (optName === 'value') {
+            return this.element.val();
+        }
+        if (optName === 'date') {
+            return this.oDatePicker.get('value');
+        }
+        if (optName === 'time') {
+            return this.$timePicker.val();
         }
     };
 
@@ -289,10 +351,10 @@
             if (!data) {
                 var opt = $.extend({}, $this.data(), typeof option === 'object' && option);
                 if (opt.timepicker) {
-                    $.extend(opt.timepicker, DateTimePicker.DEFAULTS.timepicker, opt);
+                    $.extend(opt.timepicker, DateTimePicker.DEFAULTS.timepicker, opt.timepicker);
                 }
                 if (opt.datepicker) {
-                    $.extend(opt.datepicker, DateTimePicker.DEFAULTS.datepicker, opt);
+                    $.extend(opt.datepicker, DateTimePicker.DEFAULTS.datepicker, opt.datepicker);
                 }
                 options = $.extend({}, DateTimePicker.DEFAULTS, opt);
 

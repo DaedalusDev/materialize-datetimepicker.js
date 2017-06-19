@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link type="text/css" rel="stylesheet" href="submodules/materialize-clockpicker/dist/css/materialize.clockpicker.css" media="screen,projection" />
 
+    <script src="node_modules/moment/min/moment.min.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
     <script src="submodules/materialize-clockpicker/src/js/materialize.clockpicker.js"></script>
@@ -40,18 +41,23 @@
     //am/pm
     $('#datetimepicker').pickadatetime({
         timepicker: {
-            interval: 15
+            interval: 15 // interval 15
         },
-        min: [[2017, 5, 15], [8, 30]],
-        max: [[2017, 5, 18], [18, 30]],
+        min: new Date(2017, 5, 2, 8, 30), // set min 2/06/2017 08:30
+        max: [2017, 5, 29, 18, 30],
         disable: [
+            [2017, 5, 3], // disable 03/06/2017
             [
-                [2017, 5, 16],
+                [2017, 5, 4],
                 [
-                    [18, 30],
-                    [19, 0]
+                    [18, 30],   // Disable 04/06/2017 18:30
+                    [19],       // Disable 04/06/2017 19:**
+                    [null,15]   // Disable 04/06/2017 **:15
                 ]
-            ]
+            ],
+            new Date(2017, 5, 5, 9, 30), // Disable 05/06/2017 09:30
+            new Date(2017, 5, 5, 9, 45), // Disable 05/06/2017 09:30
+            [2017, 5, 6, 12, 0]          // Disable 06/06/2017 12:30
         ]
     });
 </script>

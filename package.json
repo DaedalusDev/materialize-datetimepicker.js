@@ -29,5 +29,8 @@
   "dependencies": {
     "jquery": "^2.1.4",
     "materialize-css": "^0.98.2"
+  },
+  "optionalDependencies": {
+    "moment": "^2.18.1"
   }
 }
