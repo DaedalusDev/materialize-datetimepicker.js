@@ -27,9 +27,6 @@
     }
 
     function isEqual(a, b) {
-        if (typeof a !== typeof b) {
-            return false;
-        }
         switch (typeof a) {
             case 'object':
                 if (Array.isArray(a)) {
@@ -39,7 +36,7 @@
                 }
                 break;
             default:
-                return a === b;
+                return a == b;
                 break;
         }
     }
@@ -80,7 +77,6 @@
         $picker.on('focus', function() {
             self.oDatePicker.open();
         });
-        this.bindValue($picker.val());
         // switch to Timepicker on close
         this.oDatePicker
             .on('set', function(val) {
@@ -103,10 +99,20 @@
                 }
                 self.bindValue();
             });
+        this.$datePicker
+            .on('change', function() {
+                if (self.aDate.length) {
+                    self.dispatchTimeOption('min');
+                    self.dispatchTimeOption('max');
+                    self.dispatchTimeOption('disable');
+                }
+            });
         this.$timePicker
             .on('change', function() {
                 self.bindValue();
             });
+
+        this.bindValue($picker.val());
     }
 
     DateTimePicker.DEFAULTS = {
@@ -134,9 +140,9 @@
         if (datetime) {
             var aSplit = this.parseDateTime(datetime);
             if (aSplit) {
+                self.aDate = aSplit[0];
                 if (aSplit[0]) {
                     self.oDatePicker.set('select', aSplit[0]);
-                    self.$datePicker.trigger('change');
                 }
                 if (aSplit[1]) {
                     var oTime = new Time(aSplit[1]);
@@ -157,7 +163,7 @@
             $picker.trigger('change');
     };
 
-     DateTimePicker.prototype.parseDateTime = function(datetime) {
+    DateTimePicker.prototype.parseDateTime = function(datetime) {
         if (Array.isArray(datetime)) {
             if (datetime.length === 3 && datetime.every($.isNumeric)) {
                 return this.parseDate(datetime);
@@ -179,7 +185,7 @@
         if (typeof datetime === 'string') {
             var aSplit = /(.*)\s+(\d{1,2}:\d{1,2}\s*(AM|PM)?)$/gi.exec(datetime);
             if (aSplit) {
-                return [this.parseDate(aSplit[0]), Time.parse(aSplit[1])];
+                return [this.parseDate(aSplit[1]), Time.parse(aSplit[2])];
             }
         }
         return [this.parseDate(datetime), Time.parse(datetime)];
@@ -279,7 +285,7 @@
             if (options.distinct) {
                 $picker.addClass('hide')
                     .siblings('label')
-                        .addClass('hide');
+                    .addClass('hide');
                 this.$datePickerWrapper.removeClass('hide');
                 this.$timePickerWrapper.removeClass('hide');
             } else {
@@ -335,6 +341,22 @@
         if (optName === 'time') {
             return this.$timePicker.val();
         }
+    };
+
+    DateTimePicker.prototype.start = function() {
+        this.oDatePicker.start();
+
+        this.element.prop('disabled', false);
+        this.$datePicker.prop('disabled', false);
+        this.$timePicker.prop('disabled', false);
+    };
+
+    DateTimePicker.prototype.stop = function() {
+        this.oDatePicker.stop();
+
+        this.element.prop('disabled', true);
+        this.$datePicker.prop('disabled', true);
+        this.$timePicker.prop('disabled', true);
     };
 
     DateTimePicker.prototype.remove = function() {
