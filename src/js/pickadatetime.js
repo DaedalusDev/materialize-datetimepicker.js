@@ -132,14 +132,15 @@
     DateTimePicker.prototype.bindValue = function (datetime) {
         var self = this, $picker = this.element;
         if (datetime) {
-            var aSplit = /(.*)\s+(\d{1,2}:\d{1,2}\s*(AM|PM)?)$/gi.exec(datetime);
+            var aSplit = this.parseDateTime(datetime);
             if (aSplit) {
                 if (aSplit[1]) {
                     self.oDatePicker.set('select', aSplit[1]);
                     self.$datePicker.trigger('change');
                 }
                 if (aSplit[2]) {
-                    self.$timePicker.val(aSplit[2]).trigger('change');
+                    var oTime = new Time(aSplit[2]);
+                    self.$timePicker.val(oTime.toString()).trigger('change');
                 }
             }
         }
@@ -168,11 +169,17 @@
                 return [this.parseDate(datetime), Time.parse([datetime[3],datetime[4]])];
             }
         }
-        if (moment && moment.isMoment(datetime)) {
-            var aDateTime = moment.toArray();
+        if (window.moment && moment.isMoment(datetime)) {
+            var aDateTime = datetime.toArray();
             var aDate = [aDateTime[0], aDateTime[1], aDateTime[2]];
             var aTime = [aDateTime[3], aDateTime[4]];
             return [aDate, aTime];
+        }
+        if (typeof datetime === 'string') {
+            var aSplit = /(.*)\s+(\d{1,2}:\d{1,2}\s*(AM|PM)?)$/gi.exec(datetime);
+            if (aSplit) {
+                return [this.parseDate(aSplit[0]), Time.parse(aSplit[1])];
+            }
         }
         return [this.parseDate(datetime), Time.parse(datetime)];
     };
@@ -186,6 +193,10 @@
         }
         if ($.isNumeric(date)) {
             return this.parseDate(this.oDatePicker.component.measure(null, date));
+        }
+        if (window.moment && moment.isMoment(date)) {
+            var aDate = date.toArray();
+            return aDate;
         }
         if (typeof date === 'string') {
             if (date === 'now') {
@@ -282,7 +293,7 @@
             this.dispatchDateOption(optName);
         }
     };
-    DateTimePicker.prototype.set = function (optName, value, options) {
+    DateTimePicker.prototype.set = function (optName, value) {
         var self = this;
         if ($.isPlainObject(optName)) {
             $.each(optName, function(k, v) {
@@ -299,12 +310,13 @@
                 return this;
             }
             if (optName === 'date') {
-                this.oDatePicker.set('select', value, options);
+                this.oDatePicker.set('select', this.parseDate(value));
                 this.$datePicker.trigger('change');
                 return this;
             }
             if (optName === 'time') {
-                this.$timePicker.val(value).trigger('change');
+                var oTime = new Time(value);
+                this.$timePicker.val(oTime.toString()).trigger('change');
                 return this;
             }
             this._optionRefresh(optName);
