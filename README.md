@@ -137,7 +137,34 @@ oDateTimePicker.set('time', new Date(2017, 5, 25, 15, 30)); // Date
 oDateTimePicker.set('time', [2017, 5, 25, 15, 30]);         // Array
 oDateTimePicker.set('time', moment([2017, 5, 25, 15, 30])); // Moment
 ```
-
+#### .set({'min'|'max'}, {String, Date, Array, Moment})
+Set the max datetime value
+``` javascript
+// All examples have same results
+oDateTimePicker.set('min', '25/06/2017 15:30');            // String
+oDateTimePicker.set('min', new Date(2017, 5, 25, 15, 30)); // Date
+oDateTimePicker.set('min', [2017, 5, 25, 15, 30]);         // Array
+oDateTimePicker.set('min', moment([2017, 5, 25, 15, 30])); // Moment
+```
+#### .set('disable', Array<{String, Date, Array, Moment}>)
+Set disabled value for the datetimepicker. Need an array of date
+``` javascript
+// All examples have same results
+oDateTimePicker.set('disable', [
+            [2017, 5, 3],               // Array (disable 03/06/2017)
+            [2017, 5, 6, 12, 0],        // (Array long) Disable 06/06/2017 12:00
+            [                           // Array with multiple time
+                [2017, 5, 4],           // Define the date scope has 04/06/2017
+                [
+                    [18, 30],           // Disable 04/06/2017 18:30
+                    [19],               // Disable 04/06/2017 19:**
+                    [null,15]           // Disable 04/06/2017 **:15
+                ]
+            ],
+            new Date(2017, 5, 5, 9, 30), // (Date) Disable 05/06/2017 09:30
+            moment([2017, 5, 8, 15, 45]) // (Moment) Disable 08/06/2017 15:45
+]);
+```
 ### .get({'value'|'date'|'time'})
 Get the value of the Picker
 ``` javascript

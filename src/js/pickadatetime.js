@@ -168,6 +168,7 @@
             if (datetime.length >= 5 && datetime.every($.isNumeric)) {
                 return [this.parseDate(datetime), Time.parse([datetime[3],datetime[4]])];
             }
+            return [this.parseDate(datetime)];
         }
         if (window.moment && moment.isMoment(datetime)) {
             var aDateTime = datetime.toArray();
@@ -186,7 +187,7 @@
 
     DateTimePicker.prototype.parseDate = function (date) {
         if (Array.isArray(date)) {
-            return [date[0], date[1], date[2]];
+            return date;
         }
         if (date instanceof Date) {
             return [date.getFullYear(), date.getMonth(), date.getDate()];
