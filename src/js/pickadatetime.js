@@ -134,12 +134,12 @@
         if (datetime) {
             var aSplit = this.parseDateTime(datetime);
             if (aSplit) {
-                if (aSplit[1]) {
-                    self.oDatePicker.set('select', aSplit[1]);
+                if (aSplit[0]) {
+                    self.oDatePicker.set('select', aSplit[0]);
                     self.$datePicker.trigger('change');
                 }
-                if (aSplit[2]) {
-                    var oTime = new Time(aSplit[2]);
+                if (aSplit[1]) {
+                    var oTime = new Time(aSplit[1]);
                     self.$timePicker.val(oTime.toString()).trigger('change');
                 }
             }
